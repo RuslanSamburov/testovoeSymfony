@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Projects {% endblock %}
+
+{% block body %}
+
+    {% if projects ?? [] is empty %}
+        <p>No projects available.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Client</th>
+                    <th>Developers</th>
+                    <th>Active</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                    <tr>
+                        <td>{{ project.id }}</td>
+                        <td>{{ project.title }}</td>
+                        <td>{{ project.client }}</td>
+                        <td>
+                            {% if project.developers is empty %}
+                                No developers assigned
+                            {% else %}
+                                <ul>
+                                    {% for developer in project.developers %}
+                                        <li><a href="{{ path('profile_developer', { id: developer.id }) }}">{{ developer.name }} ({{ developer.position }})</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ project.isActive ? "Открыт" : "Закрыт" }}
+                        </td>
+                        <td>
+                            {% if project.isActive %}
+                                <form method="POST" action="{{ path('close_project', { id: project.id }) }}">
+                                    <button type="submit">Закрыть проект</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <form method="POST" action="{{ path('create_project') }}">
+        <div>
+            <label for="title">Название</label>
+            <input id="title" name="title" type="text">
+        </div>
+        <div>
+            <label for="client">Клиент</label>
+            <input id="client" name="client" type="text">
+        </div>
+        <div>
+            <button type="submit">Отправить</button>
+        </div>
+    </form>
+    <a href="/developers">Разработчики</a>
+{% endblock %}

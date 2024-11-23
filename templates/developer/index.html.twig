@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Developers {% endblock %}
+
+{% block body %}
+
+    {% if developers ?? [] is empty %}
+        <p>No projects available.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Project</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for developer in developers %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('profile_developer', { id: developer.id }) }}">{{ developer.id }}</a>
+                            </td>
+                            <td>{{ developer.name }}</td>
+                            <td>{{ developer.position }}</td>
+                            <td>{{ developer.email }}</td>
+                            <td>{{ developer.phone }}</td>
+                            <td>{{ developer.project.title }} ({{ developer.project.isActive ? "Открыт" : "Закрыт" }})</td>
+                            <td>
+                                <form method="POST" action="{{ path('yvolen_developer', { id: developer.id }) }}">
+                                    <button type="submit">УВОЛИТЬ!</button>
+                                </form>
+                            </td>
+                        </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <form method="POST" action="{{ path('create_developer') }}">
+        <div>
+            <label for="name">ФИО</label>
+            <input id="name" name="name" type="text">
+        </div>
+        <div>
+            <label for="position">Позиция</label>
+            <input id="position" name="position" type="text">
+        </div>
+        <div>
+            <label for="email">Почта</label>
+            <input id="email" name="email" type="text">
+        </div>
+        <div>
+            <label for="phone">Телефон</label>
+            <input id="phone" name="phone" type="text">
+        </div>
+        <div>
+            <label for="project">Проект</label>
+            <select id="project" name="project_id">
+                <option disabled selected>Выберите проект</option>
+                {% for project in projects %}
+                    <option value="{{ project.id }}">{{ project.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit">Отправить</button>
+        </div>
+    </form>
+    <a href="/projects">Проекты</a>
+{% endblock %}
